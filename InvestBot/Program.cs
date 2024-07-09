@@ -11,7 +11,7 @@ namespace InvestBot
 {
     internal class Program
     {
-        static string[] file { get; set; }
+       
         static void Main(string[] args)
         {
             //отправляем в наш конструктор наш токен
