@@ -5,6 +5,7 @@ using System.IO;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Collections.Generic;
 using System;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace InvestBot
 {
@@ -26,7 +27,32 @@ namespace InvestBot
         {
 
             var message = update.Message;
-            
+            var callback = update.CallbackQuery;
+           
+            //обработка inline собыйтий
+            if (callback != null && callback.Data == "1.1")
+            {
+                var buttons = new InlineKeyboardButton[]
+                        {
+                          InlineKeyboardButton.WithCallbackData("Давай перейдем на урок 2", "1.2")
+                        };
+                await botClient.SendTextMessageAsync(update.CallbackQuery.Message.Chat.Id, System.IO.File.ReadAllText("Архив\\Уроки инвестирования\\Урок1.txt"),
+                   replyMarkup: new InlineKeyboardMarkup(buttons));
+                return;
+              
+            }
+            else if (callback != null && callback.Data == "1.2")
+            {
+                var buttons = new InlineKeyboardButton[]
+                        {
+                          InlineKeyboardButton.WithCallbackData("Давай перейдем на урок 1", "1.1")
+                        };
+                await botClient.SendTextMessageAsync(update.CallbackQuery.Message.Chat.Id, System.IO.File.ReadAllText("Архив\\Уроки инвестирования\\Урокы2.txt"),
+                   replyMarkup: new InlineKeyboardMarkup(buttons));
+                return;
+
+            }
+
             //смотрим какой тип сообщения отправил пользователь, если тип не доступный для обработки - бот это уведомит
             switch (message.Type)
             {
@@ -58,6 +84,8 @@ namespace InvestBot
                         await botClient.SendTextMessageAsync(message.Chat.Id, "Я не воспринимаю стикеры");
                         return;
                     }
+                default:
+                    break;
             }
 
             //если было отправленно текстовое сообщение, то бот начнет обработку тектсовых команд
@@ -82,6 +110,7 @@ namespace InvestBot
                     return;
                 }
 
+                //обработка клавиатурных унопок
                 switch (message.Text)
                 {
                     case "Главная страница":
@@ -91,13 +120,14 @@ namespace InvestBot
                         return;
 
                     case "Уроки инвестирования":
+                        //создание кнопок сообщения
                         var buttons = new InlineKeyboardButton[]
                         {
-                          InlineKeyboardButton.WithCallbackData("<<", "1.1"),
-                          InlineKeyboardButton.WithCallbackData(">>", "1.2"),
+                          InlineKeyboardButton.WithCallbackData("1 урок", "1.1"),
+                          InlineKeyboardButton.WithCallbackData("2 урок", "1.2"),
                                     
                         };
-                        await botClient.SendTextMessageAsync(message.Chat.Id, System.IO.File.ReadAllText("Архив\\Главная страница\\Главная страница.txt"),
+                        await botClient.SendTextMessageAsync(message.Chat.Id, System.IO.File.ReadAllText("Архив\\Уроки инвестирования\\Уроки.txt"),
                            replyMarkup: new InlineKeyboardMarkup(buttons) );
                         return;
 
@@ -112,43 +142,43 @@ namespace InvestBot
                         return;
                 }
             }
-
-            switch (update.Type)
-            {
-                case UpdateType.CallbackQuery:
-                    {
-                        switch (update.CallbackQuery.Data)
-                        {
-                            case "1.1":
-                                {
-                                   
-
-                                    await botClient.SendTextMessageAsync(
-                                       message.Chat.Id,
-                                        "aaaaa");
-                                    return;
-                                }
-                            case "1.2":
-                                {
-
-
-                                    await botClient.SendTextMessageAsync(
-                                       message.Chat.Id,
-                                        "aaaaa");
-                                    return;
-                                }
-                        }
-                        return;
-                    }
             
-        }
+            //switch (update.Type)
+            //{
+            //    case UpdateType.CallbackQuery:
+            //        {
+            //            switch (update.CallbackQuery.Data)
+            //            {
+            //                case "1.1":
+            //                    {
+
+
+            //                        await botClient.SendTextMessageAsync(
+            //                           message.Chat.Id,
+            //                            "aaaaa");
+            //                        return;
+            //                    }
+            //                case "1.2":
+            //                    {
+
+
+            //                        await botClient.SendTextMessageAsync(
+            //                           message.Chat.Id,
+            //                            "aaaaa");
+            //                        return;
+            //                    }
+            //            }
+            //            return;
+            //        }
+
+            //}
 
         }
 
 
 
         
-
+        //метод обработки ошибок
         private static Task Error(ITelegramBotClient client, Exception exception, CancellationToken token)
         {
             Console.WriteLine("Произошла ошибка: "+ exception.ToString() + "\n Пользователь: "+ client.ToString());
