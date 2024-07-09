@@ -87,7 +87,9 @@ namespace InvestBot
 
         private static Task Error(ITelegramBotClient client, Exception exception, CancellationToken token)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Произошла ошибка: "+ exception.ToString() + "\n Пользователь: "+ client.ToString());
+            return Task.CompletedTask;
+
         }
     }
 }
